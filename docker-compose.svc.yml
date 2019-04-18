@@ -1,0 +1,17 @@
+version: '3.7'
+services:
+  person-service:
+    environment:
+      PERSON_SVC_PG_HOST: postgres
+      PERSON_SVC_PG_USER: postgres
+      PERSON_SVC_PG_PASS: ""
+      PERSON_SVC_PG_DB: person
+      PERSON_SVC_PORT: 9999
+    image: rms1000watt/golang-integration-test-person-service
+    ports:
+      - 9999:9999
+
+networks:
+  default:
+    external:
+      name: integration
