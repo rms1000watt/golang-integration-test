@@ -29,14 +29,10 @@ brew install postgres go
 
 ## Test
 
-Run tests in `test` dir managed by `go`:
+Run tests in `test` dir:
 
 ```bash
 ./test.sh
 ```
 
-Run tests via curl commands:
-
-```bash
-./test.sh curl
-```
+This will run tests via `curl` and `go test ./test`

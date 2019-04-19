@@ -2,16 +2,6 @@
 
 set -e
 
-help() {
-  echo "Usage:
-
-./test.sh      # Defaults to: ./test.sh go
-./test.sh curl # Runs tests using: curl
-./test.sh go   # Runs tests using: go
-"
-}
-
-
 wait_for_postgres() {
   echo "Waiting 60s for Postgres"
   for i in {1..60}; do
@@ -64,45 +54,21 @@ setup_integration_environment() {
 }
 
 
-cmd_curl() {
-  setup_integration_environment
-  trap cleanup_integration_environment EXIT
+setup_integration_environment
+trap cleanup_integration_environment EXIT
 
-  echo "Running curl..."
+echo "Running curl..."
 
-  # Validate these requests don't return failing exit code
-  curl -f -XPOST "localhost:9999/person?name=ryan&age=88"
-  curl -f -XGET "localhost:9999/person?name=ryan"
+# Validate these requests don't return failing exit code
+curl -f -XPOST "localhost:9999/person?name=ryan&age=88"
+curl -f -XGET "localhost:9999/person?name=ryan"
 
-  echo "Tests Passed"
-}
+echo "Curl Tests Passed"
 
+echo "Running go..."
 
-cmd_go() {
-  setup_integration_environment
-  trap cleanup_integration_environment EXIT
+# Run a bunch of tests managed by go
+export PERSON_SVC_TEST_SERVER_URL="http://localhost:9999"
+go test ./test
 
-  echo "Running go..."
-
-  # Run a bunch of tests managed by go
-  export PERSON_SVC_TEST_SERVER_URL="http://localhost:9999"
-  go test ./test
-}
-
-
-case "$1" in
-  curl)
-    cmd_curl ${@:2};;
-  go)
-    cmd_go ${@:2};;
-  help)
-    ;&
-  -h)
-    ;&
-  --h)
-    ;&
-  --help)
-    help; exit 1;;
-  *)
-    cmd_go; exit 1;;
-esac
+echo "Go tests passed"
